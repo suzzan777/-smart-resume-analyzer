@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <main class="dashboard-container">
+        <section class="dashboard-header">
+            <div>
+                <p class="small-label">Evaluation Dashboard</p>
+                <h1>System Performance Metrics</h1>
+            </div>
+            <a class="secondary-btn" href="/">Back to Home</a>
+        </section>
+
+        <section class="score-banner">
+            <div class="score-card">
+                <span>Precision</span>
+                <h2>{{ metrics.precision }}%</h2>
+            </div>
+            <div class="score-card">
+                <span>Recall</span>
+                <h2>{{ metrics.recall }}%</h2>
+            </div>
+            <div class="score-card highlight">
+                <span>F1 Score</span>
+                <h2>{{ metrics.f1_score }}%</h2>
+            </div>
+        </section>
+
+        <section class="feature-grid dashboard-grid">
+            <div class="panel">
+                <h3>Metric Comparison</h3>
+                <canvas id="metricChart"></canvas>
+            </div>
+
+            <div class="panel">
+                <h3>Confusion Distribution</h3>
+                <canvas id="confusionChart"></canvas>
+            </div>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Qualitative Evaluation Summary</h3>
+            <ul>
+                {% for item in comments %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Privacy, Fairness, and Explainability Notes</h3>
+            <ul>
+                <li>The system is intended as a decision-support prototype and not as an autonomous hiring tool.</li>
+                <li>Protected attributes such as gender, ethnicity, age, religion, and disability are not used in the matching logic.</li>
+                <li>Outputs remain explainable because the system shows matched skills, missing skills, education indicators, and experience indicators.</li>
+                <li>Candidate data should be handled carefully and anonymised where possible during testing and evaluation.</li>
+                <li>Results should be interpreted with human review, particularly where resumes use unusual formatting or indirect language.</li>
+            </ul>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Detailed Evaluation Results</h3>
+            {% if metrics.details %}
+            <div class="ranking-list">
+                {% for row in metrics.details %}
+                <div class="ranking-card">
+                    <h2>{{ row.resume_name }}</h2>
+                    <p><strong>Expected Label:</strong> {{ row.expected_label }}</p>
+                    <p><strong>Predicted Score:</strong> {{ row.predicted_score }}%</p>
+                    <p><strong>Predicted Label:</strong> {{ row.predicted_label }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No evaluation pairs found. Add labelled items to <code>data/evaluation_pairs.json</code>.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <script id="metric-labels-data" type="application/json">{{ metric_labels | tojson }}</script>
+    <script id="metric-values-data" type="application/json">{{ metric_values | tojson }}</script>
+    <script id="confusion-labels-data" type="application/json">{{ confusion_labels | tojson }}</script>
+    <script id="confusion-values-data" type="application/json">{{ confusion_values | tojson }}</script>
+
+    <script>
+        const metricLabels = JSON.parse(document.getElementById("metric-labels-data").textContent);
+        const metricValues = JSON.parse(document.getElementById("metric-values-data").textContent);
+        const confusionLabels = JSON.parse(document.getElementById("confusion-labels-data").textContent);
+        const confusionValues = JSON.parse(document.getElementById("confusion-values-data").textContent);
+
+        const metricCanvas = document.getElementById("metricChart");
+        if (metricCanvas) {
+            new Chart(metricCanvas, {
+                type: "bar",
+                data: {
+                    labels: metricLabels,
+                    datasets: [{
+                        label: "Percentage",
+                        data: metricValues,
+                        backgroundColor: "rgba(110, 168, 254, 0.7)",
+                        borderColor: "rgba(110, 168, 254, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: "#f5f7ff" }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#f5f7ff" },
+                            grid: { color: "rgba(255,255,255,0.08)" }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: "#f5f7ff" },
+                            grid: { color: "rgba(255,255,255,0.08)" }
+                        }
+                    }
+                }
+            });
+        }
+
+        const confusionCanvas = document.getElementById("confusionChart");
+        if (confusionCanvas) {
+            new Chart(confusionCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: confusionLabels,
+                    datasets: [{
+                        data: confusionValues,
+                        backgroundColor: [
+                            "rgba(30, 201, 143, 0.8)",
+                            "rgba(255, 193, 7, 0.8)",
+                            "rgba(255, 107, 129, 0.8)",
+                            "rgba(110, 168, 254, 0.8)"
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: "#f5f7ff" }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

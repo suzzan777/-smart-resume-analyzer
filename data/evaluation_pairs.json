@@ -1,0 +1,102 @@
+[
+  {
+    "resume_name": "candidate_1.pdf",
+    "expected_label": "high",
+    "predicted_score": 67
+  },
+  {
+    "resume_name": "candidate_2.pdf",
+    "expected_label": "low",
+    "predicted_score": 33
+  },
+  {
+    "resume_name": "candidate_3.pdf",
+    "expected_label": "medium",
+    "predicted_score": 42
+  },
+  {
+    "resume_name": "candidate_4.pdf",
+    "expected_label": "medium",
+    "predicted_score": 49
+  },
+  {
+    "resume_name": "candidate_5.pdf",
+    "expected_label": "medium",
+    "predicted_score": 65
+  },
+  {
+    "resume_name": "candidate_6.pdf",
+    "expected_label": "high",
+    "predicted_score": 93
+  },
+  {
+    "resume_name": "candidate_7.pdf",
+    "expected_label": "low",
+    "predicted_score": 24
+  },
+  {
+    "resume_name": "candidate_8.pdf",
+    "expected_label": "high",
+    "predicted_score": 80
+  },
+  {
+    "resume_name": "candidate_9.pdf",
+    "expected_label": "high",
+    "predicted_score": 81
+  },
+  {
+    "resume_name": "candidate_10.pdf",
+    "expected_label": "low",
+    "predicted_score": 8
+  },
+  {
+    "resume_name": "candidate_11.pdf",
+    "expected_label": "low",
+    "predicted_score": 7
+  },
+  {
+    "resume_name": "candidate_12.pdf",
+    "expected_label": "high",
+    "predicted_score": 88
+  },
+  {
+    "resume_name": "candidate_13.pdf",
+    "expected_label": "high",
+    "predicted_score": 68
+  },
+  {
+    "resume_name": "candidate_14.pdf",
+    "expected_label": "medium",
+    "predicted_score": 69
+  },
+  {
+    "resume_name": "candidate_15.pdf",
+    "expected_label": "low",
+    "predicted_score": 31
+  },
+  {
+    "resume_name": "candidate_16.pdf",
+    "expected_label": "low",
+    "predicted_score": 11
+  },
+  {
+    "resume_name": "candidate_17.pdf",
+    "expected_label": "medium",
+    "predicted_score": 47
+  },
+  {
+    "resume_name": "candidate_18.pdf",
+    "expected_label": "low",
+    "predicted_score": 7
+  },
+  {
+    "resume_name": "candidate_19.pdf",
+    "expected_label": "low",
+    "predicted_score": 28
+  },
+  {
+    "resume_name": "candidate_20.pdf",
+    "expected_label": "medium",
+    "predicted_score": 52
+  }
+]

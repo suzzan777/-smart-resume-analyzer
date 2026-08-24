@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="dashboard-container">
+        <section class="dashboard-header">
+            <div>
+                <p class="small-label">
+                    {% if result.view_mode == "job_seeker" %}
+                        Job Seeker View
+                    {% else %}
+                        Employer View
+                    {% endif %}
+                </p>
+                <h1>{{ result.filename }}</h1>
+                <p><strong>Job Title:</strong> {{ result.job_title }}</p>
+                <p><strong>Source:</strong> {{ result.job_source }}</p>
+                {% if result.job_source_url %}
+                <p><strong>Source URL:</strong> <a href="{{ result.job_source_url }}" target="_blank">{{ result.job_source_url }}</a></p>
+                {% endif %}
+            </div>
+            <a class="secondary-btn" href="/">Analyze Another Resume</a>
+        </section>
+
+        <section class="score-banner">
+            <div class="score-card">
+                <span>Text Similarity</span>
+                <h2>{{ result.similarity_score }}%</h2>
+            </div>
+            <div class="score-card">
+                <span>Feature Score</span>
+                <h2>{{ result.feature_score }}%</h2>
+            </div>
+            <div class="score-card highlight">
+                <span>Overall Match</span>
+                <h2>{{ result.overall_score }}%</h2>
+            </div>
+        </section>
+
+        {% if result.view_mode == "job_seeker" %}
+
+        <section class="feature-grid dashboard-grid">
+            <div class="panel">
+                <h3>Missing Skills</h3>
+                {% if result.missing_skills %}
+                <div class="chip-group">
+                    {% for item in result.missing_skills %}
+                    <span class="chip danger">{{ item }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No missing skills.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Matched Skills</h3>
+                {% if result.matched_skills %}
+                <div class="chip-group">
+                    {% for item in result.matched_skills %}
+                    <span class="chip success">{{ item }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No matched skills found.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Education Indicators</h3>
+                {% if result.resume_education %}
+                <ul>
+                    {% for item in result.resume_education %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No education indicators found.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Experience Indicators</h3>
+                {% if result.resume_experience %}
+                <ul>
+                    {% for item in result.resume_experience %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No experience indicators found.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Improvement Feedback</h3>
+            <ul>
+                {% for item in result.job_seeker_feedback %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        {% else %}
+
+        <section class="feature-grid dashboard-grid">
+            <div class="panel">
+                <h3>Matched Skills</h3>
+                {% if result.matched_skills %}
+                <div class="chip-group">
+                    {% for item in result.matched_skills %}
+                    <span class="chip success">{{ item }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No matched skills found.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Missing Skills</h3>
+                {% if result.missing_skills %}
+                <div class="chip-group">
+                    {% for item in result.missing_skills %}
+                    <span class="chip danger">{{ item }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No missing skills.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Experience Indicators</h3>
+                {% if result.resume_experience %}
+                <ul>
+                    {% for item in result.resume_experience %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No experience indicators found.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Employer Fit Summary</h3>
+                <p><strong>Fit Level:</strong> {{ result.employer_summary.fit_level }}</p>
+                <p><strong>Matched Skills:</strong> {{ result.employer_summary.matched_count }}</p>
+                <p><strong>Missing Skills:</strong> {{ result.employer_summary.missing_count }}</p>
+                <p><strong>Experience Strength:</strong> {{ result.employer_summary.experience_strength }}</p>
+            </div>
+        </section>
+
+        {% endif %}
+
+        <section class="panel wide-panel">
+            <h3>Job Description</h3>
+            <pre>{{ result.job_description }}</pre>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Extracted Resume Text</h3>
+            <pre>{{ result.extracted_text }}</pre>
+        </section>
+    </main>
+</body>
+</html>

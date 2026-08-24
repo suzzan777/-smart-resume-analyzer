@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <main class="dashboard-container">
+        <section class="dashboard-header">
+            <div>
+                <p class="small-label">Database History</p>
+                <h1>Stored Analysis Results</h1>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <a class="secondary-btn" href="/export_csv">Export CSV</a>
+                <a class="secondary-btn" href="/">Back to Home</a>
+            </div>
+        </section>
+
+        <section class="feature-grid dashboard-grid">
+            <div class="panel">
+                <h3>Top 10 Overall Scores</h3>
+                <canvas id="scoreChart"></canvas>
+            </div>
+
+            <div class="panel">
+                <h3>Fit-Level Distribution</h3>
+                <canvas id="fitChart"></canvas>
+            </div>
+        </section>
+
+        {% if results %}
+        <section class="ranking-list">
+            {% for row in results %}
+            <div class="ranking-card">
+                <div class="ranking-top">
+                    <div>
+                        <h2>{{ row.filename }}</h2>
+                        <p class="small-label">{{ row.created_at }}</p>
+                    </div>
+                    <div class="ranking-score">{{ row.overall_score }}%</div>
+                </div>
+
+                <div class="ranking-meta">
+                    <p><strong>Fit Level:</strong> {{ row.fit_level }}</p>
+                    <p><strong>Similarity:</strong> {{ row.similarity_score }}%</p>
+                    <p><strong>Feature Score:</strong> {{ row.feature_score }}%</p>
+                </div>
+
+                <p><strong>Matched Skills:</strong> {{ row.matched_skills }}</p>
+                <p><strong>Missing Skills:</strong> {{ row.missing_skills }}</p>
+                <p><strong>Education:</strong> {{ row.resume_education }}</p>
+                <p><strong>Experience:</strong> {{ row.resume_experience }}</p>
+
+                <form action="{{ url_for('delete_history_result', result_id=row.id) }}" method="post" style="margin-top:14px;">
+                    <button type="submit" class="danger-btn">Delete Result</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+        {% else %}
+        <section class="panel">
+            <p>No stored analysis results yet.</p>
+        </section>
+        {% endif %}
+    </main>
+
+    <script id="score-labels-data" type="application/json">{{ score_labels | tojson }}</script>
+    <script id="score-values-data" type="application/json">{{ score_values | tojson }}</script>
+    <script id="fit-counts-data" type="application/json">{{ fit_counts | tojson }}</script>
+
+    <script>
+        const scoreLabels = JSON.parse(document.getElementById("score-labels-data").textContent);
+        const scoreValues = JSON.parse(document.getElementById("score-values-data").textContent);
+        const fitCounts = JSON.parse(document.getElementById("fit-counts-data").textContent);
+
+        const scoreCanvas = document.getElementById("scoreChart");
+        if (scoreCanvas) {
+            new Chart(scoreCanvas, {
+                type: "bar",
+                data: {
+                    labels: scoreLabels,
+                    datasets: [{
+                        label: "Overall Score",
+                        data: scoreValues,
+                        backgroundColor: "rgba(110, 168, 254, 0.7)",
+                        borderColor: "rgba(110, 168, 254, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: "#f5f7ff" }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#f5f7ff" },
+                            grid: { color: "rgba(255,255,255,0.08)" }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: "#f5f7ff" },
+                            grid: { color: "rgba(255,255,255,0.08)" }
+                        }
+                    }
+                }
+            });
+        }
+
+        const fitCanvas = document.getElementById("fitChart");
+        if (fitCanvas) {
+            new Chart(fitCanvas, {
+                type: "pie",
+                data: {
+                    labels: Object.keys(fitCounts),
+                    datasets: [{
+                        data: Object.values(fitCounts),
+                        backgroundColor: [
+                            "rgba(30, 201, 143, 0.8)",
+                            "rgba(110, 168, 254, 0.8)",
+                            "rgba(255, 107, 129, 0.8)"
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: "#f5f7ff" }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Ranking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="dashboard-container">
+        <section class="dashboard-header">
+            <div>
+                <p class="small-label">Multi-Candidate Analysis</p>
+                <h1>Candidate Ranking</h1>
+            </div>
+            <a class="secondary-btn" href="/">Analyze More Resumes</a>
+        </section>
+
+        <section class="panel wide-panel">
+            <h3>Job Description</h3>
+            <pre>{{ job_description }}</pre>
+        </section>
+
+        <section class="ranking-list">
+            {% for result in results %}
+            <div class="ranking-card">
+                <div class="ranking-top">
+                    <div>
+                        <span class="rank-number">#{{ loop.index }}</span>
+                        <h2>{{ result.filename }}</h2>
+                    </div>
+                    <div class="ranking-score">{{ result.overall_score }}%</div>
+                </div>
+
+                <div class="ranking-meta">
+                    <p><strong>Fit Level:</strong> {{ result.employer_summary.fit_level }}</p>
+                    <p><strong>Text Similarity:</strong> {{ result.similarity_score }}%</p>
+                    <p><strong>Feature Score:</strong> {{ result.feature_score }}%</p>
+                    <p><strong>Experience Strength:</strong> {{ result.employer_summary.experience_strength }}</p>
+                </div>
+
+                <div class="chip-group">
+                    {% for item in result.matched_skills %}
+                    <span class="chip success">{{ item }}</span>
+                    {% endfor %}
+                    {% for item in result.missing_skills %}
+                    <span class="chip danger">{{ item }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>
